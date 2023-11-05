@@ -1,4 +1,10 @@
 #include<bits/stdc++.h>
+// #include <iostream>
+// #include <fstream>
+// #include <sstream>
+// #include <string>
+// #include <vector>
+// #include <map>
 using namespace std;
 
 class NaiveBayesClassifier {
@@ -50,6 +56,10 @@ public:
             }
         }
         file.close();
+        // cout<<"totalSpamEmails: "<<totalSpamEmails<<endl;
+        // cout<<"totalHamEmails: "<<totalHamEmails<<endl;
+        // cout<<"totalSpamWords: "<<totalSpamWords<<endl;
+        // cout<<"totalHamWords: "<<totalHamWords<<endl;
     }
 
     string classify(const string& email) {
