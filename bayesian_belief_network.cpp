@@ -39,7 +39,7 @@ public:
 
 class BayesianNetwork {
 public:
-    vector<Node> nodes; //List of nodes
+    vector<Node> nodes; // List of nodes
     unordered_map<string, vector<string>> edges;  // Adjacency list to represent edges
 
     void addNode(Node node){
@@ -60,18 +60,18 @@ public:
                 const vector<int>& key = itr->first;
 
                 if (nodeName == "OC") {
-                    //special case for "OC" node
+                    // special case for "OC" node
                     int ocValue = key[0];
                     vector<double> ocProbabilities = itr->second;
 
-                    //if OC value matches observed value
+                    // if OC value matches observed value vector
                     if (ocProbabilities[observedValue - 1] == 0) {
                         itr = CPT.erase(itr);
                     } else {
                         ++itr;
                     }
                 } else {
-                    // Handle nodes based on their positions in the key vector
+                    // handle nodes based on their positions in the key vector
                     int nodePosition;
                     if (nodeName == "B") nodePosition = 0;
                     else if (nodeName == "M") nodePosition = 1;
@@ -80,7 +80,7 @@ public:
                     else if (nodeName == "LB") nodePosition = 4;
                     else if (nodeName == "S") nodePosition = 5;
 
-                    // Check if the observed value matches the value at the specific position in the key vector
+                    // check if the observed value matches the value at the specific position in the key vector
                     if (key[nodePosition] != observedValue) {
                         itr = CPT.erase(itr);
                     } else {
@@ -97,15 +97,15 @@ public:
         Node temp;
         for (const Node& node : nodes) {
             if(node.name == "OC"){
-                CPT = node.Final_prob; //get CPT
+                CPT = node.Final_prob; // get CPT
             }
             if(node.name == queryVariable){
-                temp = node; //get query node
+                temp = node; // get query node
             }
         }
         variable_elimination(CPT, observedEvidence);
 
-        if(temp.name == "OC"){ //special case of OC
+        if(temp.name == "OC"){ // special case of OC
             int a=0, b=0, c=0, d=0;
             for (auto itr = CPT.begin(); itr != CPT.end(); ++itr){
                 if(itr->second[0]==1){
@@ -127,7 +127,7 @@ public:
             ans[3] = (double)c/(double)total;
             ans[4] = (double)d/(double)total;
         }
-        else{ //case for other nodes
+        else{ // case for other nodes
             unordered_map<int, int> nums;
             int total=0;
             for(auto itr = temp.probabilities.begin(); itr!=temp.probabilities.end(); ++itr){
@@ -175,7 +175,7 @@ int readCSV(string filename, vector<int>& buying, vector<int>& maint, vector<int
             while (getline(ss, token, ',')) {
                 tokens.push_back(token);
             }
-            if(i>0){
+            if(i>0){ // first line is left because it contains headings
                 buying[stoi(tokens[0])] ++;
                 maint[stoi(tokens[1])] ++;
                 doors[stoi(tokens[2])] ++;
@@ -209,14 +209,16 @@ int readCSV(string filename, vector<int>& buying, vector<int>& maint, vector<int
 
 int main() {
     BayesianNetwork network;
-    vector<int> buying = {0,0,0,0,0}; //Price rating values: 1, 2, 3, 4
-    vector<int> maint = {0,0,0,0,0}; //Maintenance rating values: 1, 2, 3, 4
-    vector<int> doors = {0,0,0,0}; //Number of Doors values: 1, 2, 3
-    vector<int> persons = {0,0,0,0,0}; //Number of Persons values: 2, 4
-    vector<int> lug_boot = {0,0,0,0}; //Luggage-Boot rating values: 1, 2, 3
-    vector<int> safety = {0,0,0,0}; //Safety rating values: 1, 2, 3
-    map<vector<int>, vector<double>> overall_class; //Overall class rating values 1, 2, 3, 4
+    vector<int> buying = {0,0,0,0,0}; // Price rating values: 1, 2, 3, 4
+    vector<int> maint = {0,0,0,0,0}; // Maintenance rating values: 1, 2, 3, 4
+    vector<int> doors = {0,0,0,0}; // Number of Doors values: 1, 2, 3
+    vector<int> persons = {0,0,0,0,0}; // Number of Persons values: 2, 4
+    vector<int> lug_boot = {0,0,0,0}; // Luggage-Boot rating values: 1, 2, 3
+    vector<int> safety = {0,0,0,0}; // Safety rating values: 1, 2, 3
+    map<vector<int>, vector<double>> overall_class; // Overall class rating values 1, 2, 3, 4
+    
     int total = readCSV("bbn_car_data.csv", buying, maint, doors, persons, lug_boot, safety, overall_class);
+    // replace "bbn_car_data.csv" with data file path
     
     Node B("B", buying, total);
     Node M("M", maint, total);
@@ -239,11 +241,26 @@ int main() {
     network.addEdge("D", "OC");
     network.addEdge("P", "OC");
     network.addEdge("LB", "OC");
-    network.addEdge("S", "OC"); //OC is child node of every other node
-
+    network.addEdge("S", "OC"); // OC is child node of every other node
+    
+    /* queryVariables can be nodes:
+    B, M, D, P, LB, S, OC
+    */
     string queryVariable = "OC";  // Example query variables
-    unordered_map<string, int> observedEvidence = {{"B", 1}, {"D", 2}};  // Example observed evidence
 
+    /* observedEvidences can be:
+    B: 1, 2, 3, 4
+    M: 1, 2, 3, 4
+    D: 2, 3, 4
+    P: 2, 4
+    LB: 1, 2, 3
+    S: 1, 2, 3
+    OC: 1, 2, 3, 4
+    */
+    unordered_map<string, int> observedEvidence = {{"B", 1}, {"D", 2}};  // Example observed evidence
+    // add upto one observed evidence for each node
+    // number of nodes with evidence can be 0 or greater
+    
     unordered_map<int, double> inferenceResult = network.inference(queryVariable, observedEvidence);
 
     for (const auto& pair : inferenceResult) {
