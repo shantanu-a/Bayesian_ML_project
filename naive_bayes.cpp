@@ -1,10 +1,9 @@
-#include<bits/stdc++.h>
-// #include <iostream>
-// #include <fstream>
-// #include <sstream>
-// #include <string>
-// #include <vector>
-// #include <map>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <map>
 using namespace std;
 
 class NaiveBayesClassifier {
