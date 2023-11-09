@@ -1,12 +1,10 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <unordered_map>
 #include <map>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <numeric>
 
 using namespace std;
 
@@ -244,7 +242,7 @@ int main() {
     network.addEdge("S", "OC"); //OC is child node of every other node
 
     string queryVariable = "OC";  // Example query variables
-    unordered_map<string, int> observedEvidence = {{"B", 3}, {"S", 2}};  // Example observed evidence
+    unordered_map<string, int> observedEvidence = {{"B", 1}, {"D", 2}};  // Example observed evidence
 
     unordered_map<int, double> inferenceResult = network.inference(queryVariable, observedEvidence);
 
