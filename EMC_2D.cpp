@@ -20,7 +20,6 @@ void initializeClusters(int N,int K,vector<Point>& data,vector<double>& cluster_
     for (int k = 0; k < K; ++k) {
         // Generate a random number
         int random_number = dis(gen);
-        cout<<"random no"<<random_number<<endl;
         cluster_weights[k] = 1.0 / K;
         cluster_means[k] =make_pair(data[random_number].x,data[random_number].y);
         cluster_covariances[k] = std::make_pair(1.0, 1.0);
@@ -91,11 +90,13 @@ void expectationMaximization(int N,int K,vector<Point>& data,vector<std::vector<
         // Check for convergence 
         converged = hasConverged(prevLL, currLL, epsilon);
         if(converged)
-            cout<<"\nhs Converged, iter no :"<<iteration<<"\n";
+            cout<<"\nAlgorithm Converged on iteration "<<iteration<<"\n";
         prevLL=currLL;
 
         iteration++;
     }
+    if(!converged)
+        cout<<"\nAlgorithm did not Converged in "<<max_iterations<<"\n";
 }
 
 int main() {
@@ -121,7 +122,6 @@ int main() {
     file.close();
 
     int N = data.size();
-    cout<<N<<"\n";
 
     // Define the number of clusters (K)
     int K = 3;
@@ -139,7 +139,7 @@ int main() {
     // Printing results
     for(int i=0;i<N;i++){
         //rounding to convert probability into 1 or 0;
-        cout<<i+1<<". "<<data[i].y/(data[i].x*data[i].x)<<" : "<<round(responsibilities[i][0])<<" , "<<round(responsibilities[i][1])<<" , "<<round(responsibilities[i][2])<<endl;
+        //cout<<i+1<<". ("<<data[i].x<<" , "<<data[i].y<<") : "<<round(responsibilities[i][0])<<" , "<<round(responsibilities[i][1])<<" , "<<round(responsibilities[i][2])<<endl;
         for(int j=0;j<K;j++){
             c[j]+=round(responsibilities[i][j]);
         }
